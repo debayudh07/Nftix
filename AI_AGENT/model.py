@@ -47,3 +47,19 @@ class BookingDetails(BaseModel):
     date: str = Field(description="Date in DD-MM-YYYY format")
     time: str = Field(description="Time in HH:MM 24-hour format")
     number_of_tickets: int = Field(description="Number of tickets requested", default=1)
+
+
+# Main Ticket Booking Agent
+class TicketBookingAgent:
+    def __init__(self):
+        self.llm = GroqLLM()
+        self.shows_db = {
+            "interstellar": {
+                "type": "movie",
+                "showtimes": {
+                    "2024-12-02": ["11:00", "14:00", "16:00", "19:30"],
+                },
+                "booking_url": "https://yourapp.com/movies/interstellar",
+                "price": 150.00,
+            }
+        }
