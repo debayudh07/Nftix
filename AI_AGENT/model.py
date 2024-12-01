@@ -75,3 +75,18 @@ class TicketBookingAgent:
             shows_list.append(show_details)
         
         return "Available shows or events:\n" + "\n".join(shows_list)
+    
+    def check_show_availability(self, show_name: str, date: str, time: str) -> str:
+        show_name = show_name.lower()
+        if show_name not in self.shows_db:
+            return f"Show '{show_name}' not found in our database."
+        
+        show_info = self.shows_db[show_name]
+        if date not in show_info["showtimes"]:
+            return f"No shows available on {date}."
+        
+        if time not in show_info["showtimes"][date]:
+            available_times = ", ".join(show_info["showtimes"][date])
+            return f"Show not available at {time}. Available times: {available_times}."
+        
+        return f"Show is available at {time} on {date}."
