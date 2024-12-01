@@ -90,3 +90,11 @@ class TicketBookingAgent:
             return f"Show not available at {time}. Available times: {available_times}."
         
         return f"Show is available at {time} on {date}."
+    
+    def get_show_price(self, show_name: str, number_of_tickets: int = 1) -> str:
+        show_name = show_name.lower()
+        if show_name not in self.shows_db:
+            return f"Show '{show_name}' not found in our database."
+        
+        price = self.shows_db[show_name]["price"] * number_of_tickets
+        return f"Total price for {number_of_tickets} ticket(s): ${price:.2f}"
