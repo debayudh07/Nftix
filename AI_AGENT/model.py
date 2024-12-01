@@ -98,3 +98,15 @@ class TicketBookingAgent:
         
         price = self.shows_db[show_name]["price"] * number_of_tickets
         return f"Total price for {number_of_tickets} ticket(s): ${price:.2f}"
+    
+    def generate_booking_link(self, show_name: str, date: str, time: str, number_of_tickets: int = 1) -> str:
+        show_name = show_name.lower()
+        if show_name not in self.shows_db:
+            return f"Cannot generate booking link: Show '{show_name}' not found."
+        
+        show_info = self.shows_db[show_name]
+        if date not in show_info["showtimes"] or time not in show_info["showtimes"][date]:
+            return "Cannot generate booking link: Show not available at specified date/time."
+        
+        booking_url = (f"{show_info['booking_url']}?date={date}&time={time}&tickets={number_of_tickets}")
+        return booking_url
