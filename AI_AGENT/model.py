@@ -64,3 +64,14 @@ class TicketBookingAgent:
             }
         }
         self.setup_agent()
+
+    def list_available_shows(self) -> str:
+        if not self.shows_db:
+            return "No shows are currently available."
+        
+        shows_list = []
+        for show_name, show_info in self.shows_db.items():
+            show_details = f"{show_name.title()} ({show_info['type']})"
+            shows_list.append(show_details)
+        
+        return "Available shows or events:\n" + "\n".join(shows_list)
