@@ -63,3 +63,4 @@ class TicketBookingAgent:
                 "price": 150.00,
             }
         }
+        self.setup_agent()
