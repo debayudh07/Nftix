@@ -176,3 +176,6 @@ class TicketBookingAgent:
             tool_names=tool_names,
             agent_scratchpad=""  # Provide a default empty string
         )
+
+        self.agent = create_react_agent(llm=self.llm, tools=tools, prompt=prompt)
+        self.agent_executor = AgentExecutor(agent=self.agent, tools=tools, verbose=True)
