@@ -39,3 +39,11 @@ class GroqLLM(LLM):
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
         }
+    
+
+# Define BookingDetails Schema
+class BookingDetails(BaseModel):
+    show_name: str = Field(description="Name of the movie")
+    date: str = Field(description="Date in DD-MM-YYYY format")
+    time: str = Field(description="Time in HH:MM 24-hour format")
+    number_of_tickets: int = Field(description="Number of tickets requested", default=1)
