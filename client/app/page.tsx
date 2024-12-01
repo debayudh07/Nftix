@@ -13,30 +13,37 @@ import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-w
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 import { FlipWords } from "@/components/ui/flip-words";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Link from "next/link";
+import WorldMap from "@/components/ui/world-map";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-orange-500 font-sans">
       <header className="py-6 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">NFTIXX</h1>
+          <Link className="text-3xl font-bold" href="/">
+            NFTix
+          </Link>
           <div className="flex items-center space-x-4">
             <nav>
               <ul className="flex space-x-4">
                 <li>
-                  <a href="#features" className="hover:text-orange-400">
+                  <Link href="#features" className="hover:text-orange-400">
                     Features
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#how-it-works" className="hover:text-orange-400">
+                  <Link
+                    href="#how-it-works"
+                    className="hover:text-orange-400 text-center"
+                  >
                     How It Works
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#get-started" className="hover:text-orange-400">
+                  <Link href="#get-started" className="hover:text-orange-400">
                     Get Started
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -53,24 +60,63 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <BackgroundBeamsWithCollision>
-          <section className="text-center mb-16">
-            <h2 className="text-5xl font-extrabold mb-4">
-              Revolutionizing Movie Ticketing with Blockchain
-            </h2>
-            <p className="text-xl mb-8">
-              Secure, transparent, and innovative ticketing experience powered
-              by blockchain technology
-            </p>
-            <a
-              href="#get-started"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-black bg-orange-500 hover:bg-orange-600"
-            >
-              Get Started
-              <ArrowRight className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
-            </a>
-          </section>
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <BackgroundBeamsWithCollision className="justify-start flex">
+          <div className="flex">
+            <section className="text-left mb-12 w-[50%]">
+              <h2 className="text-5xl font-extrabold mb-4">
+                Revolutionizing Ticketing with Blockchain
+              </h2>
+              <p className="text-xl mb-8">
+                Secure, transparent, and innovative ticketing experience powered
+                by blockchain technology
+              </p>
+              {/* <WorldMap /> */}
+              <Link
+                href="/choose"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-black bg-orange-500 hover:bg-orange-600"
+              >
+                Book Your Tickets Now
+                <ArrowRight className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
+              </Link>
+            </section>
+            <section className="justify-end w-[50%] py-20">
+              <WorldMap
+                dots={[
+                  {
+                    start: {
+                      lat: 64.2008,
+                      lng: -149.4937,
+                    }, // Alaska (Fairbanks)
+                    end: {
+                      lat: 34.0522,
+                      lng: -118.2437,
+                    }, // Los Angeles
+                  },
+                  {
+                    start: { lat: 64.2008, lng: -149.4937 }, // Alaska (Fairbanks)
+                    end: { lat: -15.7975, lng: -47.8919 }, // Brazil (Brasília)
+                  },
+                  {
+                    start: { lat: -15.7975, lng: -47.8919 }, // Brazil (Brasília)
+                    end: { lat: 38.7223, lng: -9.1393 }, // Lisbon
+                  },
+                  {
+                    start: { lat: 51.5074, lng: -0.1278 }, // London
+                    end: { lat: 28.6139, lng: 77.209 }, // New Delhi
+                  },
+                  {
+                    start: { lat: 28.6139, lng: 77.209 }, // New Delhi
+                    end: { lat: 43.1332, lng: 131.9113 }, // Vladivostok
+                  },
+                  {
+                    start: { lat: 28.6139, lng: 77.209 }, // New Delhi
+                    end: { lat: -1.2921, lng: 36.8219 }, // Nairobi
+                  },
+                ]}
+              />
+            </section>
+          </div>
         </BackgroundBeamsWithCollision>
 
         <div className="h-[40rem] flex justify-center items-center px-4">
