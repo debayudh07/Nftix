@@ -11,6 +11,7 @@ contract Nftix is ERC721URIStorage {
     uint256 public constant ROYALTY_PERCENT = 6; // 6%
     uint256 public constant RESELLER_PERCENT = 5; // 5%
     uint256 public constant PLATFORM_PERCENT = 3; // 3%
+    uint256 public constant INITIAL_SALE_CONVENIENCE_FEE_PERCENT = 3; // 3% convenience fee on first sale
     uint256 public constant MAX_RESELL_PERCENT = 115; // 115%
 
     struct Event {
@@ -96,7 +97,15 @@ contract Nftix is ERC721URIStorage {
             _event.soldTickets + seatNumbers.length <= _event.totalTickets,
             "Not enough tickets"
         );
-        require(msg.value >= _event.price * seatNumbers.length, "Insufficient payment");
+        
+        // Calculate total ticket price
+        uint256 totalTicketPrice = _event.price * seatNumbers.length;
+        
+        // Calculate convenience fee for initial sale
+        uint256 convenienceFee = (totalTicketPrice * INITIAL_SALE_CONVENIENCE_FEE_PERCENT) / 100;
+        
+        // Ensure sufficient payment including convenience fee
+        require(msg.value >= totalTicketPrice + convenienceFee, "Insufficient payment");
 
         for (uint256 i = 0; i < seatNumbers.length; i++) {
             uint256 seatNumber = seatNumbers[i];
@@ -122,6 +131,11 @@ contract Nftix is ERC721URIStorage {
         _setTokenURI(ticketId, _event.image);
 
         _event.soldTickets += seatNumbers.length;
+
+        // Distribute initial sale fees
+        uint256 eventOwnerShare = totalTicketPrice;
+        payable(_event.owner).transfer(eventOwnerShare);
+        payable(owner).transfer(convenienceFee);
 
         emit TicketMinted(ticketId, eventId, msg.sender, seatNumbers);
     }
