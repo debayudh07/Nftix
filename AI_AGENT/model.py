@@ -172,10 +172,17 @@ class TicketBookingAgent:
             {agent_scratchpad}
             """
         ).partial(
-            tools=str(tools),  # Convert tools to string representation
+            tools=str(tools),  
             tool_names=tool_names,
-            agent_scratchpad=""  # Provide a default empty string
+            agent_scratchpad="" 
         )
 
         self.agent = create_react_agent(llm=self.llm, tools=tools, prompt=prompt)
         self.agent_executor = AgentExecutor(agent=self.agent, tools=tools, verbose=True)
+
+    def process_query(self, user_query: str) -> str:
+        try:
+            response = self.agent_executor.invoke({"input": user_query})
+            return response["output"]
+        except Exception as e:
+            return f"Error: {str(e)}"
