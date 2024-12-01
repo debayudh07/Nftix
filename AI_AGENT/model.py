@@ -110,3 +110,29 @@ class TicketBookingAgent:
         
         booking_url = (f"{show_info['booking_url']}?date={date}&time={time}&tickets={number_of_tickets}")
         return booking_url
+    
+    def setup_agent(self):
+        tools = [
+            Tool(
+                name="List Available Shows",
+                func=self.list_available_shows,
+                description="List all shows or events available in the database"
+            ),
+            Tool(
+                name="Check Show Availability",
+                func=self.check_show_availability,
+                description="Check if a show is available at a specific date and time"
+            ),
+            Tool(
+                name="Get Price",
+                func=self.get_show_price,
+                description="Calculate the total price for tickets"
+            ),
+            Tool(
+                name="Generate Booking Link",
+                func=self.generate_booking_link,
+                description="Generate a booking link for the show"
+            )
+        ]
+        
+        tool_names = [tool.name for tool in tools]
