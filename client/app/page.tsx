@@ -104,13 +104,13 @@ export const features = [
   {
     title: "Loyalty Rewards",
     description: "Earn and redeem tokens for exclusive benefits",
-    link: "#",
+    link: "##",
     icon: <Gift className="h-8 w-8" />,
   },
   {
     title: "AI-Powered Chatbot",
     description: "Personalized assistance for bookings and queries",
-    link: "#",
+    link: "###",
     icon: <MessageCircle className="h-8 w-8" />,
   },
 ];
