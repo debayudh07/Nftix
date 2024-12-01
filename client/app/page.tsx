@@ -19,6 +19,7 @@ import WorldMap from "@/components/ui/world-map";
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-orange-500 font-sans">
+      {/* Header */}
       <header className="py-6 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link className="text-3xl font-bold" href="/">
@@ -33,10 +34,7 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="#how-it-works"
-                    className="hover:text-orange-400 text-center"
-                  >
+                  <Link href="#how-it-works" className="hover:text-orange-400">
                     How It Works
                   </Link>
                 </li>
@@ -60,7 +58,9 @@ export default function HomePage() {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {/* Other sections */}
         <BackgroundBeamsWithCollision className="justify-start flex">
           <div className="flex">
             <section className="text-left mb-12 w-[50%]">
@@ -71,7 +71,6 @@ export default function HomePage() {
                 Secure, transparent, and innovative ticketing experience powered
                 by blockchain technology
               </p>
-              {/* <WorldMap /> */}
               <Link
                 href="/choose"
                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-black bg-orange-500 hover:bg-orange-600"
@@ -84,48 +83,32 @@ export default function HomePage() {
               <WorldMap
                 dots={[
                   {
-                    start: {
-                      lat: 64.2008,
-                      lng: -149.4937,
-                    }, // Alaska (Fairbanks)
-                    end: {
-                      lat: 34.0522,
-                      lng: -118.2437,
-                    }, // Los Angeles
-                  },
-                  {
                     start: { lat: 64.2008, lng: -149.4937 }, // Alaska (Fairbanks)
-                    end: { lat: -15.7975, lng: -47.8919 }, // Brazil (Brasília)
+                    end: { lat: 34.0522, lng: -118.2437 }, // Los Angeles
                   },
-                  {
-                    start: { lat: -15.7975, lng: -47.8919 }, // Brazil (Brasília)
-                    end: { lat: 38.7223, lng: -9.1393 }, // Lisbon
-                  },
-                  {
-                    start: { lat: 51.5074, lng: -0.1278 }, // London
-                    end: { lat: 28.6139, lng: 77.209 }, // New Delhi
-                  },
-                  {
-                    start: { lat: 28.6139, lng: 77.209 }, // New Delhi
-                    end: { lat: 43.1332, lng: 131.9113 }, // Vladivostok
-                  },
-                  {
-                    start: { lat: 28.6139, lng: 77.209 }, // New Delhi
-                    end: { lat: -1.2921, lng: 36.8219 }, // Nairobi
-                  },
+                  // Add more dots if needed
                 ]}
               />
             </section>
           </div>
         </BackgroundBeamsWithCollision>
 
-        <div className="h-[40rem] flex justify-center items-center px-4">
-          <div className="text-4xl mx-auto font-normal text-orange dark:white">
-            How It Works:
-            <FlipWords words={Steps} />
-          </div>
-        </div>
+        {/* "List Your Event" Section */}
+        <section className="my-16 bg-orange-900 text-center py-12 px-4 rounded-lg shadow-lg">
+          <h3 className="text-4xl font-bold mb-6 text-white">
+            Wanna list your own event?
+          </h3>
+          <p className="text-lg mb-8 text-orange-300">
+            Join the revolution and showcase your events to the world!
+          </p>
+          <Link href="/listevent">
+            <Button className="px-8 py-4 text-xl font-semibold rounded-md bg-orange-500 text-black hover:bg-orange-600">
+              List Your Event
+            </Button>
+          </Link>
+        </section>
 
+        {/* Key Features Section */}
         <section id="features" className="mb-16 pt-5">
           <h3 className="text-3xl font-bold mb-8 text-center">Key Features</h3>
           <div className="max-w-5xl mx-auto px-8">
@@ -134,6 +117,7 @@ export default function HomePage() {
         </section>
       </main>
 
+      {/* Footer */}
       <footer className="bg-orange-900 py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <p>&copy; 2024 On-Chain Book My Show. All rights reserved.</p>
