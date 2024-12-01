@@ -136,3 +136,43 @@ class TicketBookingAgent:
         ]
         
         tool_names = [tool.name for tool in tools]
+
+        prompt = PromptTemplate.from_template(
+            """You are an intelligent ticket booking assistant designed to help users book movie, concert, or event tickets seamlessly.
+            
+            ### Your primary objectives are to:
+            1. Understand the user's ticket booking request
+            2. List all available shows or events
+            3. Validate show availability
+            4. Provide ticket pricing information
+            5. Generate a direct booking link
+            
+            ### Workflow:
+            - Carefully extract show name, date, time, and number of tickets from the query
+            - List all available shows if requested
+            - Check if the show exists in our database
+            - Verify show availability for the requested date and time
+            - Calculate total ticket price
+            - Generate a booking link if all conditions are met
+            
+            If any information is missing or invalid, provide clear guidance to the user.
+            
+            User Query: {input}
+            
+            Reasoning Steps:
+            1. What specific show does the user want to book?
+            2. Are all required booking details present?
+            3. Can the requested show be booked at the specified time?
+            4. What is the total cost?
+            
+            ### Tools: {tools}
+            ### Tool Names: {tool_names}
+            ### Agent Scratchpad: {agent_scratchpad}
+            
+            {agent_scratchpad}
+            """
+        ).partial(
+            tools=str(tools),  # Convert tools to string representation
+            tool_names=tool_names,
+            agent_scratchpad=""  # Provide a default empty string
+        )
