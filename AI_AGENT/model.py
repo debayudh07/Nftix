@@ -55,13 +55,13 @@ class TicketBookingAgent:
     def __init__(self):
         self.llm = GroqLLM()
         self.shows_db = {
-            "interstellar": {
-                "type": "movie",
+            "coldplay": {
+                "type": "concert",
                 "showtimes": {
-                    "2024-12-02": ["11:00", "14:00", "16:00", "19:30"],
+                    "2024-12-02": ["16:00"],
                 },
                 "booking_url": "https://yourapp.com/movies/interstellar",
-                "price": 150.00,
+                "price": 15000.00,
             }
         }
         self.ticket_contract = None
@@ -197,7 +197,7 @@ class TicketBookingAgent:
         tool_names = [tool.name for tool in tools]
 
         prompt = PromptTemplate.from_template(
-            """You are an intelligent ticket booking assistant designed to help users book movie, concert, or event tickets seamlessly.
+            """You are an intelligent ticket booking assistant designed to help users book concert, sport and stand up comedy shows tickets seamlessly.
             
             ### Your primary objectives are to:
             1. Understand the user's ticket booking request
