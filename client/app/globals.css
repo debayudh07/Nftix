@@ -2,24 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap'); */
-
-@font-face {
-  font-family: 'ObjectSans-heavy';
-  src: url('/fonts/ObjectSans-Heavy.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'ObjectSans-regular';
-  src: url('/fonts/ObjectSans-Regular.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-}
-
 body {
-  font-family: 'ObjectSans-regular', sans-serif;
+  font-family: "ObjectSans-regular", sans-serif;
   font-weight: 400;
 }
 
@@ -28,7 +12,7 @@ h2,
 h3,
 h4,
 h5 {
-  font-family: 'ObjectSans-heavy', sans-serif;
+  font-family: "ObjectSans-heavy", sans-serif;
   font-weight: 800;
 }
 
@@ -38,7 +22,7 @@ html {
 
 /* Font sizes for headings */
 h1 {
-  font-size: 4.210rem;
+  font-size: 4.21rem;
 }
 
 h2 {
@@ -58,14 +42,13 @@ h5 {
 }
 
 small {
-  font-size: 0.750rem;
+  font-size: 0.75rem;
 }
 
-
-html , body {
+html,
+body {
   overflow-x: hidden;
 }
-
 
 @layer base {
   :root {

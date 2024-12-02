@@ -3,6 +3,7 @@
 import { useState } from "react";
 import EventCard from "@/components/ui/EventCard";
 import MintTicketPopup from "@/components/ui/MintTicketPopup";
+import abi, { address } from "../abi";
 import Navbar from "@/components/functions/Navbar";
 
 type Event = {

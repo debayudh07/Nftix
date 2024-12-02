@@ -22,6 +22,8 @@ import {
   coinbaseWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { OktoProvider, BuildType } from "okto-sdk-react";
 import { useTheme } from "next-themes";
 
 import { getConfig } from "./wagmi";
@@ -70,14 +72,22 @@ export default function Providers(props: {
   return (
     <WagmiProvider config={config} initialState={props.initialState}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
+        {/* <RainbowKitProvider
           initialChain={1320}
           theme={selectedTheme}
           coolMode
           modalSize="wide"
         >
           {props.children}
-        </RainbowKitProvider>
+        </RainbowKitProvider> */}
+        <GoogleOAuthProvider clientId="57770701043-v5tilj9h8eej88m22ijhnohp6vmffbb9.apps.googleusercontent.com">
+          <OktoProvider
+            apiKey="ec9d3f81-6659-479f-ba2c-070dc66bf334"
+            buildType={BuildType.SANDBOX}
+          >
+            {props.children}
+          </OktoProvider>
+        </GoogleOAuthProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

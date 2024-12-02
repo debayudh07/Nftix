@@ -25,7 +25,12 @@ export default function MintTicketPopup({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitted");
+    console.log(`Minting ${quantity} ticket(s) for ${event.name}`);
+
     // Add your ticket minting logic here in the future
+
+    // Close the popup after submission
+    onClose();
   };
 
   return (

@@ -35,8 +35,8 @@ export default function BookingCards() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {categories.map((category, index, key) => (
-        <Link href="/bookticket">
+      {categories.map((category, index) => (
+        <Link href="/bookticket" key={index}>
           <motion.div
             key={category.title}
             className="relative h-80 rounded-xl shadow-lg cursor-pointer overflow-hidden"
