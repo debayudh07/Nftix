@@ -64,23 +64,50 @@ class TicketBookingAgent:
                 "price": 150.00,
             }
         }
+        self.ticket_contract = None
         self.setup_agent()
     
-    def resell_ticket(self, ticket_id: int, resale_price: float) -> str:
-        
-        api_url = "https://your-backend-api.com/resell-ticket"  
-        payload = {
-            "ticket_id": ticket_id,
-            "resale_price": resale_price,
-        }
+    def get_user_tickets(self, user_address: str):
         try:
-            response = requests.post(api_url, json=payload)
-            if response.status_code == 200:
-                return f"Ticket {ticket_id} successfully listed for resale at ${resale_price:.2f}."
-            else:
-                return f"Error listing ticket {ticket_id} for resale: {response.json().get('message', 'Unknown error')}"
+            tickets = self.ticket_contract.functions.getTicketsByOwner(user_address).call()
+            return tickets
         except Exception as e:
-            return f"Failed to resell ticket: {str(e)}"
+            return f"Error fetching tickets: {str(e)}"
+
+    def list_tickets_for_resale(self, user_address: str) -> str:
+        tickets = self.get_user_tickets(user_address)
+        if not tickets:
+            return "You do not own any tickets."
+
+        ticket_list = "\n".join(
+            [f"ID: {ticket['id']} | Event: {ticket['event']} | Date: {ticket['date']} | Price: {ticket['price']}" for ticket in tickets]
+        )
+        return f"Your tickets:\n{ticket_list}"
+
+    def set_ticket_for_resale(self, ticket_id: int, resale_price: float):
+        try:
+            tx = self.ticket_contract.functions.listForResale(ticket_id, resale_price).transact({"from": "user_address"})
+            return f"Ticket {ticket_id} listed for resale at ${resale_price}."
+        except Exception as e:
+            return f"Error listing ticket: {str(e)}"
+
+    def resell_ticket(self, ticket_id: int, resale_price: float):
+        try:
+            tx = self.ticket_contract.functions.resellTicket(ticket_id).transact({"value": resale_price, "from": "user_address"})
+            return f"Ticket {ticket_id} successfully resold."
+        except Exception as e:
+            return f"Error reselling ticket: {str(e)}"
+
+    def handle_resell_query(self, user_address: str) -> str:
+        tickets = self.get_user_tickets(user_address)
+        if not tickets:
+            return "You do not own any tickets to resell."
+
+        ticket_list = "\n".join(
+            [f"ID: {ticket['id']} | Event: {ticket['event']} | Max Resell Price: ${(ticket['price'] * MAX_RESELL_PERCENT) / 100}" for ticket in tickets]
+        )
+
+        return f"Available tickets for resell:\n{ticket_list}\nWhich ticket would you like to resell?"
 
     def list_available_shows(self) -> str:
         if not self.shows_db:
@@ -151,9 +178,19 @@ class TicketBookingAgent:
                 description="Generate a booking link for the show"
             ), 
             Tool(
+                name="List Tickets for Resale",
+                func=self.list_tickets_for_resale,
+                description="List all tickets owned by the user for resale."
+            ),
+            Tool(
+                name="Set Ticket for Resale",
+                func=self.set_ticket_for_resale,
+                description="Set a ticket for resale at a specified price."
+            ),
+            Tool(
                 name="Resell Ticket",
                 func=self.resell_ticket,
-                description="Resell a ticket by providing ticket ID and resale price."
+                description="Finalize the resale of a ticket."
             )
         ]
         
@@ -168,14 +205,22 @@ class TicketBookingAgent:
             3. Validate show availability
             4. Provide ticket pricing information
             5. Generate a direct booking link
+            6. List all tickets owned by the user.
+            7. Allow the user to select a ticket for resale.
+            8. Provide maximum resale price based on system rules.
+            9. Finalize ticket resale.
             
             ### Workflow:
-            - Carefully extract show name, date, time, and number of tickets from the query
-            - List all available shows if requested
-            - Check if the show exists in our database
-            - Verify show availability for the requested date and time
-            - Calculate total ticket price
-            - Generate a booking link if all conditions are met
+            - Carefully extract show name, date, time, and number of tickets from the query.
+            - List all available shows if requested.
+            - Check if the show exists in our database.
+            - Verify show availability for the requested date and time.
+            - Calculate total ticket price.
+            - Generate a booking link if all conditions are met.
+            - Identify if the user wants to resell tickets.
+            - Retrieve user-owned tickets.
+            - Guide user to set resale price within limits.
+            - Confirm resale listing and finalize the process.
             
             If any information is missing or invalid, provide clear guidance to the user.
             
@@ -206,5 +251,14 @@ class TicketBookingAgent:
         try:
             response = self.agent_executor.invoke({"input": user_query})
             return response["output"]
+        except Exception as e:
+            return f"Error: {str(e)}"
+        
+    def process_reselling(self, user_query: str, user_address: str) -> str:
+        try:
+            if "resell tickets" in user_query.lower():
+                return self.handle_resell_query(user_address)
+            else:
+                return self.agent_executor.invoke({"input": user_query})["output"]
         except Exception as e:
             return f"Error: {str(e)}"
