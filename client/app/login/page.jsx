@@ -4,7 +4,7 @@ import { useOkto } from "okto-sdk-react";
 import { GoogleLogin } from "@react-oauth/google";
 
 function LoginPage() {
-    const { authenticate, createWallet, getWallets } = useOkto();
+    const { authenticate, createWallet, getWallets, showWidgetModal } = useOkto();
     const [authToken, setAuthToken] = useState(null);
     const [wallets, setWallets] = useState([]);
 
@@ -47,6 +47,8 @@ function LoginPage() {
             console.error("Error creating new wallet:", error);
         }
     };
+
+    showWidgetModal();
 
     return (
         <div>
