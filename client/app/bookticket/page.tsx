@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useReadContract } from "wagmi";
 import EventCard from "@/components/functions/EventCard";
 import MintTicketPopup from "@/components/functions/MintTicketPopup";
-import Navbar from "@/components/functions/Navbar";
+import {Navbar} from "@/components/functions/Navbar";
 import abi, { address } from "../abi";
 
 // Enum to match the Solidity EventType
@@ -33,40 +33,47 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   // Replace with your actual contract address and ABI
-  const { data: events, isLoading, error } = useReadContract({
+  const {
+    data: events,
+    isLoading,
+    error,
+  } = useReadContract({
     address: address, // Replace with actual contract address
     abi: abi, // Replace with your contract ABI
-    functionName: 'getEventsByType',
+    functionName: "getEventsByType",
     args: [EventType.Concert], // Example: fetching conference events
   });
 
   console.log(events);
 
   // Convert BigInt values to more frontend-friendly format
-  const processedEvents = events?.map(event => ({
-    ...event,
-    id: Number(event.id),
-    seats: Number(event.seats),
-    price: Number(event.price) / 10 ** 18, // Assuming price is in wei, convert to ETH
-  })) || [];
+  const processedEvents =
+    events?.map((event) => ({
+      ...event,
+      id: Number(event.id),
+      seats: Number(event.seats),
+      price: Number(event.price) / 10 ** 18, // Assuming price is in wei, convert to ETH
+    })) || [];
 
   console.log("processedEvents", processedEvents);
 
-  if (isLoading) return (
-    <main className="min-h-screen p-8 bg-black text-orange-50">
-      <Navbar />
-      <div className="text-center text-2xl mt-12">Loading events...</div>
-    </main>
-  );
+  if (isLoading)
+    return (
+      <main className="min-h-screen p-8 bg-black text-orange-50">
+        <Navbar />
+        <div className="text-center text-2xl mt-12">Loading events...</div>
+      </main>
+    );
 
-  if (error) return (
-    <main className="min-h-screen p-8 bg-black text-orange-50">
-      <Navbar />
-      <div className="text-center text-2xl mt-12 text-red-500">
-        Error loading events: {error.message}
-      </div>
-    </main>
-  );
+  if (error)
+    return (
+      <main className="min-h-screen p-8 bg-black text-orange-50">
+        <Navbar />
+        <div className="text-center text-2xl mt-12 text-red-500">
+          Error loading events: {error.message}
+        </div>
+      </main>
+    );
 
   return (
     <>

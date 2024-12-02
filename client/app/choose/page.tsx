@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import BookingCards from "@/components/ui/BookingCards";
-import Navbar from "@/components/functions/Navbar";
+import { Navbar } from "@/components/functions/Navbar";
 
 export const metadata: Metadata = {
   title: "Interactive Ticket Booking",

@@ -12,51 +12,16 @@ import { Button } from "@/components/ui/button";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 import { FlipWords } from "@/components/ui/flip-words";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import Link from "next/link";
 import WorldMap from "@/components/ui/world-map";
+import { Navbar } from "@/components/functions/Navbar";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-orange-500 font-sans">
       {/* Header */}
-      <header className="py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <Link className="text-3xl font-bold" href="/">
-            NFTix
-          </Link>
-          <div className="flex items-center space-x-4">
-            <nav>
-              <ul className="flex space-x-4">
-                <li>
-                  <Link href="#features" className="hover:text-orange-400">
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#how-it-works" className="hover:text-orange-400">
-                    How It Works
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#get-started" className="hover:text-orange-400">
-                    Get Started
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-
-            <ConnectButton
-              chainStatus="name"
-              accountStatus={{
-                smallScreen: "avatar",
-                largeScreen: "full",
-              }}
-              label="Connect Wallet"
-            />
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
