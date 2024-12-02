@@ -4,6 +4,7 @@ from langchain.prompts import PromptTemplate
 from typing import Dict, Any, List, Optional
 from pydantic import BaseModel, Field
 from groq import Groq
+import requests
 import os
 import dotenv
 
@@ -64,6 +65,22 @@ class TicketBookingAgent:
             }
         }
         self.setup_agent()
+    
+    def resell_ticket(self, ticket_id: int, resale_price: float) -> str:
+        
+        api_url = "https://your-backend-api.com/resell-ticket"  
+        payload = {
+            "ticket_id": ticket_id,
+            "resale_price": resale_price,
+        }
+        try:
+            response = requests.post(api_url, json=payload)
+            if response.status_code == 200:
+                return f"Ticket {ticket_id} successfully listed for resale at ${resale_price:.2f}."
+            else:
+                return f"Error listing ticket {ticket_id} for resale: {response.json().get('message', 'Unknown error')}"
+        except Exception as e:
+            return f"Failed to resell ticket: {str(e)}"
 
     def list_available_shows(self) -> str:
         if not self.shows_db:
