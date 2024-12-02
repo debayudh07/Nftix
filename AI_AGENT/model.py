@@ -149,6 +149,11 @@ class TicketBookingAgent:
                 name="Generate Booking Link",
                 func=self.generate_booking_link,
                 description="Generate a booking link for the show"
+            ), 
+            Tool(
+                name="Resell Ticket",
+                func=self.resell_ticket,
+                description="Resell a ticket by providing ticket ID and resale price."
             )
         ]
         
