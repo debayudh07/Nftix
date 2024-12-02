@@ -68,65 +68,45 @@ export default function MintTicketPopup({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
+  
     if (!userAddress) {
       setError("Please connect your wallet first");
       return;
     }
-
+  
     try {
       setIsLoading(true);
-
-      // Extensive logging of event details
-      console.log('Event details:', {
-        id: event.id,
-        iid: event.eventId,
-        name: event.name,
-        price: event.price,
-        totalTickets: event.totalTickets
-      });
-
+  
+      // Safe event ID conversion
+      const eventId = safeBigInt(event.eventId);
+  
+      // Generate random seat numbers
+      const totalSeats = Number(event.totalTickets);
+      if (quantity > totalSeats) {
+        throw new Error("Requested quantity exceeds total available seats.");
+      }
+  
+      const seatNumbers = generateRandomSeats(quantity, totalSeats);
+  
+      // Log seat numbers for debugging
+      console.log('Generated random seat numbers:', seatNumbers);
+  
       // Safe price calculation
       const priceNum = typeof event.price === 'string'
         ? parseFloat(event.price)
         : event.price;
-
+  
       if (!Number.isFinite(priceNum)) {
         throw new Error(`Invalid price: ${event.price}`);
       }
-
+  
       const totalPrice = priceNum * quantity;
-      const convenienceFee = (totalPrice * 0.03);
+      const convenienceFee = totalPrice * 0.03;
       const totalPriceWithFee = totalPrice + convenienceFee;
-
-      // Safe BigInt conversion for price in wei
-      const priceInWei = (() => {
-        try {
-          // Multiply by 10^18 and use BigInt
-          return BigInt(Math.floor(totalPriceWithFee * 10 ** 18));
-        } catch (conversionError) {
-          console.error('Price to Wei conversion error:', conversionError);
-          throw new Error('Failed to convert price to Wei');
-        }
-      })();
-
-      // Safe event ID conversion
-      const eventId = safeBigInt(event.eventId);
-
-      // Generate seat numbers as BigInt array
-      const seatNumbers = Array.from(
-        { length: quantity },
-        (_, i) => BigInt(i)
-      );
-
-      // Detailed logging before contract call
-      console.log('Contract call parameters:', {
-        eventId,
-        seatNumbers,
-        priceInWei: priceInWei.toString()
-      });
-
-      // Call contract function
+  
+      const priceInWei = BigInt(Math.floor(totalPriceWithFee * 10 ** 18));
+  
+      // Call the contract
       const result = await writeContractAsync({
         address: address,
         abi: abi,
@@ -134,28 +114,31 @@ export default function MintTicketPopup({
         args: [eventId, seatNumbers],
         value: priceInWei,
       });
-
+  
       console.log(`Successfully minted ${quantity} ticket(s) for ${event.name}`, result);
-
+  
       onClose();
     } catch (error) {
-      // Comprehensive error logging
-      console.error('Full error details:', {
-        error,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        errorStack: error instanceof Error ? error.stack : 'No stack trace'
-      });
-
-      // User-friendly error message
-      if (error instanceof Error) {
-        setError(`Ticket minting failed: ${error.message}`);
-      } else {
-        setError("An unexpected error occurred during ticket minting");
-      }
+      console.error('Error minting tickets:', error);
+      setError(error instanceof Error ? error.message : 'Unknown error occurred');
     } finally {
       setIsLoading(false);
     }
   };
+  
+  // Generate random seat numbers
+  function generateRandomSeats(quantity: number, totalSeats: number): bigint[] {
+    const seats = new Set<number>();
+  
+    while (seats.size < quantity) {
+      const randomSeat = Math.floor(Math.random() * totalSeats);
+      seats.add(randomSeat); // Ensures no duplicate seats
+    }
+  
+    // Convert seat numbers to BigInt
+    return Array.from(seats).map((seat) => BigInt(seat));
+  }
+  
 
   // Safe total price calculation
   const calculateTotalPrice = () => {

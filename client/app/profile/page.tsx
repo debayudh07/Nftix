@@ -8,30 +8,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, Ticket } from "lucide-react";
 
-interface Ticket {
-    id: number;
-    eventName: string;
-    date: number;
-    venue: string;
-    seat: string;
-}
-
 function Profile() {
     const account = useAccount();
-    const [ticketsArray, setTicketsArray] = React.useState([]);
     const { data: tickets, isLoading, error } = useReadContract({
         address: address,
         abi: abi,
         functionName: "getTicketsByOwner",
         args: [account.address],
     });
-
-    // console.log(tickets[0]);
-    console.log(`tickets: ${tickets}`);
-    console.log(`${tickets?.map((ticket: any) => ticket.owner)}`);
-    // console.log("tickets", tickets);
-    // console.log(`tickets.isArray: ${Array.isArray(tickets)}`);
-    // setTicketsArray(Array.isArray(tickets));
 
     if (isLoading) {
         return <LoadingState />;
@@ -41,12 +25,8 @@ function Profile() {
         return <ErrorState error={error} />;
     }
 
-    // Safely handle tickets data
-    // const ticketArray =
-    //     Array.isArray(tickets) ||
-    //     (tickets && typeof tickets === "object" && "length" in tickets && typeof tickets.length === "number")
-    //         ? Array.from(tickets)
-    //         : [];
+    // Ensure tickets is an array before mapping
+    const ticketArray = Array.isArray(tickets) ? tickets : [];
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -54,10 +34,10 @@ function Profile() {
                 <Ticket className="mr-2 h-8 w-8" />
                 Your Booked Tickets
             </h1>
-            {tickets.length > 0 ? (
+            {ticketArray.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {tickets.map((ticket: any, index: number) => (
-                        <TicketCard key={index} ticket={ticket} />
+                    {ticketArray.map((ticketData: any, index: number) => (
+                        <TicketCard key={index} ticketData={ticketData} />
                     ))}
                 </div>
             ) : (
@@ -73,25 +53,31 @@ function Profile() {
     );
 }
 
-function TicketCard({ ticket }: { ticket: any }) {
+function TicketCard({ ticketData }: { ticketData: any }) {
+    const { ticket, eventDetails } = ticketData;
+
     return (
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center">
                     <Ticket className="mr-2 h-5 w-5" />
-                    {ticket.eventName}
+                    {eventDetails.name}
                 </CardTitle>
             </CardHeader>
             <CardContent>
                 <p>
                     <strong>Date:</strong>{" "}
-                    {new Date(ticket.date * 1000).toLocaleDateString()}
+                    {new Date(Number(eventDetails.startDate) * 1000).toLocaleDateString()}
                 </p>
                 <p>
-                    <strong>Venue:</strong> {ticket.venue}
+                    <strong>Venue:</strong> {eventDetails.location}
                 </p>
                 <p>
-                    <strong>Seat:</strong> {ticket.seat}
+                    <strong>Seat:</strong> {ticket.seatNumbers.join(", ")}
+                </p>
+                <p>
+                    <strong>Price:</strong>{" "}
+                    {parseFloat((Number(ticket.price) / 1e18).toFixed(3))} ETH
                 </p>
             </CardContent>
         </Card>
