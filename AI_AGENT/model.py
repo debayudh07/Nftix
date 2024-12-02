@@ -63,7 +63,7 @@ class TicketBookingAgent:
                 "booking_url": "https://yourapp.com/concerts/coldplay",
                 "price": 25000.00,
             }, 
-            "BGT": {
+            "bgt": {
                 "type": "Sports",
                 "showtimes": {
                     "2024-12-02": ["16:00"],
@@ -71,7 +71,7 @@ class TicketBookingAgent:
                 "booking_url": "https://yourapp.com/sports/BGT",
                 "price": 10000.00,
             },
-            "Dilluminati": {
+            "dilluminati": {
                 "type": "Concerts",
                 "showtimes": {
                     "2024-12-02": ["16:00"],
