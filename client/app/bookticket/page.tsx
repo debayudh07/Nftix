@@ -1,15 +1,9 @@
 "use client";
 
 import { useState } from "react";
-<<<<<<< Updated upstream
-import EventCard from "@/components/ui/EventCard";
-import MintTicketPopup from "@/components/ui/MintTicketPopup";
-import abi, { address } from "../abi";
-=======
 import { useReadContract } from "wagmi";
 import EventCard from "@/components/functions/EventCard";
 import MintTicketPopup from "@/components/functions/MintTicketPopup";
->>>>>>> Stashed changes
 import Navbar from "@/components/functions/Navbar";
 import abi, { address } from "../abi";
 
