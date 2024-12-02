@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { OktoConnect } from "@/components/functions/OktoConnect";
 
 export function Navbar() {
   return (
@@ -37,6 +38,7 @@ export function Navbar() {
             }}
             label="Connect Wallet"
           />
+          <OktoConnect />
         </div>
       </div>
     </header>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useReadContract } from "wagmi";
 import EventCard from "@/components/functions/EventCard";
 import MintTicketPopup from "@/components/functions/MintTicketPopup";
-import Navbar from "@/components/functions/Navbar";
+import {Navbar} from "@/components/functions/Navbar";
 import abi, { address } from "../abi";
 
 // Enum to match the Solidity EventType
