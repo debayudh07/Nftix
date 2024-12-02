@@ -60,9 +60,17 @@ class TicketBookingAgent:
                 "showtimes": {
                     "2024-12-02": ["16:00"],
                 },
-                "booking_url": "https://yourapp.com/movies/interstellar",
+                "booking_url": "https://yourapp.com/concerts/coldplay",
                 "price": 15000.00,
-            }
+            }, 
+            "BGT": {
+                "type": "Sports",
+                "showtimes": {
+                    "2024-12-02": ["16:00"],
+                },
+                "booking_url": "https://yourapp.com/sports/BGT",
+                "price": 25000.00,
+            },
         }
         self.ticket_contract = None
         self.setup_agent()
