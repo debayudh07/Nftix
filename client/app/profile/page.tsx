@@ -30,6 +30,7 @@ function Profile() {
 
     // Ensure tickets is an array before mapping
     const ticketArray = Array.isArray(tickets) ? tickets : [];
+    console.log(ticketArray);
 
     return (
         <div className="container mx-auto px-4 py-8">

@@ -251,4 +251,36 @@ contract Nftix is ERC721URIStorage {
 
         return matchingTicketsWithEvents;
     }
+
+    function getAllResellTickets() external view returns (TicketWithEventDetails[] memory) {
+        // First, count the number of tickets listed for resale
+        uint256 count = 0;
+        uint256 copyOfTicketCount = s_ticketCounter;
+
+        for (uint256 i = 1; i <= copyOfTicketCount; i++) {
+            if (listedForResale[i]) {
+                count++;
+            }
+        }
+
+        // Create an array to store the matching tickets with event details
+        TicketWithEventDetails[]
+            memory matchingTicketsWithEvents = new TicketWithEventDetails[](
+                count
+            );
+
+        // Populate the array with matching tickets and their event details
+        uint256 index = 0;
+        for (uint256 i = 1; i <= copyOfTicketCount; i++) {
+            if (listedForResale[i]) {
+                matchingTicketsWithEvents[index] = TicketWithEventDetails({
+                    ticket: tickets[i],
+                    eventDetails: events[tickets[i].eventId]
+                });
+                index++;
+            }
+        }
+
+        return matchingTicketsWithEvents;
+    }
 }

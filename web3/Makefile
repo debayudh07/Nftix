@@ -5,4 +5,4 @@ deploy:
 	npx hardhat run ignition/modules/deploy.ts --network baseSepolia
 
 verify:
-	npx hardhat verify --network baseSepolia 0x384b7B26A941F996B2Bd62b067399B8fFA796372
+	npx hardhat verify --network baseSepolia 0x04D8d49e2FfD5DFc9a4e004431c68845bbC21A47

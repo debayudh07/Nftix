@@ -9,22 +9,22 @@ export function Navbar() {
         <Link className="text-3xl font-bold" href="/">
           NFTix
         </Link>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-8">
           <nav>
-            <ul className="flex space-x-4">
+            <ul className="flex space-x-8 text-lg">
               <li>
-                <Link href="#features" className="hover:text-orange-400">
-                  Features
+                <Link href="/listevent" className="hover:text-orange-400">
+                  Listing
                 </Link>
               </li>
               <li>
-                <Link href="#how-it-works" className="hover:text-orange-400">
-                  How It Works
+                <Link href="/resell" className="hover:text-orange-400">
+                  Resell
                 </Link>
               </li>
               <li>
-                <Link href="#get-started" className="hover:text-orange-400">
-                  Get Started
+                <Link href="/profile" className="hover:text-orange-400">
+                  Profile
                 </Link>
               </li>
             </ul>
