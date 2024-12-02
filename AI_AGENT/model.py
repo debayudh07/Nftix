@@ -104,7 +104,7 @@ class TicketBookingAgent:
             return "You do not own any tickets to resell."
 
         ticket_list = "\n".join(
-            [f"ID: {ticket['id']} | Event: {ticket['event']} | Max Resell Price: ${(ticket['price'] * MAX_RESELL_PERCENT) / 100}" for ticket in tickets]
+            [f"ID: {ticket['id']} | Event: {ticket['event']} | Max Resell Price: ${(ticket['price'] * 15) / 100 + (ticket['price'])}" for ticket in tickets]
         )
 
         return f"Available tickets for resell:\n{ticket_list}\nWhich ticket would you like to resell?"
@@ -226,12 +226,15 @@ class TicketBookingAgent:
             
             User Query: {input}
             
-            Reasoning Steps:
+            ### Reasoning Steps:
             1. What specific show does the user want to book?
             2. Are all required booking details present?
             3. Can the requested show be booked at the specified time?
             4. What is the total cost?
-            
+            5. Is user reselling those particular event tickets which is present among the list of events for which user has bought tickets?
+            6. What is the maximum reselling price?
+            7. Is user agreeing with the maximum price at which the tickets are available for reselling?
+
             ### Tools: {tools}
             ### Tool Names: {tool_names}
             ### Agent Scratchpad: {agent_scratchpad}
