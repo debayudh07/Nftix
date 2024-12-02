@@ -10,7 +10,10 @@ interface Event {
   seats: number
   price: number
   location: string
-  date: string
+  startDate: string
+  endDate: string
+  soldTickets: number
+  totalTickets: number
 }
 
 interface EventCardProps {
@@ -21,11 +24,11 @@ interface EventCardProps {
 export default function EventCard({ event, onMint }: EventCardProps) {
   return (
     <div className="bg-orange-900 rounded-lg overflow-hidden">
-      <Image 
-        src={event.image} 
-        alt={event.name} 
-        width={300} 
-        height={200} 
+      <Image
+        src={event.image}
+        alt={event.name}
+        width={300}
+        height={200}
         className="w-full object-cover h-48"
       />
       <div className="p-6">
@@ -37,13 +40,16 @@ export default function EventCard({ event, onMint }: EventCardProps) {
         </div>
         <div className="flex items-center text-orange-200 mb-4">
           <CalendarIcon className="w-4 h-4 mr-2" />
-          <span>{event.date}</span>
+          <span>
+            {`${new Date(Number(event.startDate) * 1000).toLocaleString()} - 
+              ${new Date(Number(event.endDate) * 1000).toLocaleString()}`}
+          </span>
         </div>
         <div className="flex justify-between items-center text-orange-200 mb-4">
-          <span>Available Seats: {event.seats}</span>
+          <span>Available Seats: {event.totalTickets - event.soldTickets}</span>
           <span>Price: {event.price} ETH</span>
         </div>
-        <Button 
+        <Button
           onClick={onMint}
           className="w-full bg-orange-500 text-black hover:bg-orange-600"
         >

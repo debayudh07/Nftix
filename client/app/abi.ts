@@ -819,6 +819,141 @@ const abi = [
         "inputs": [
             {
                 "internalType": "address",
+                "name": "me",
+                "type": "address"
+            }
+        ],
+        "name": "getTicketsByOwner",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "owner",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "ticketId",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "price",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "eventId",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "timesSold",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256[]",
+                                "name": "seatNumbers",
+                                "type": "uint256[]"
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "isResellable",
+                                "type": "bool"
+                            }
+                        ],
+                        "internalType": "struct Nftix.Ticket",
+                        "name": "ticket",
+                        "type": "tuple"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "owner",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "eventId",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "price",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "totalTickets",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "soldTickets",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "startDate",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "endDate",
+                                "type": "uint256"
+                            },
+                            {
+                                "internalType": "enum Nftix.EventType",
+                                "name": "eventType",
+                                "type": "uint8"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "name",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "description",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "location",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "image",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "bool[]",
+                                "name": "seats",
+                                "type": "bool[]"
+                            }
+                        ],
+                        "internalType": "struct Nftix.Event",
+                        "name": "eventDetails",
+                        "type": "tuple"
+                    }
+                ],
+                "internalType": "struct Nftix.TicketWithEventDetails[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
                 "name": "owner",
                 "type": "address"
             },
@@ -1149,7 +1284,7 @@ const abi = [
     }
 ];
 
-const address = "0x6812362C9c19e76fb3b91e18f83b6BE6D17B7e0c";
+const address = "0x384b7B26A941F996B2Bd62b067399B8fFA796372";
 
 export default abi;
 export { address };

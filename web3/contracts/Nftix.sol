@@ -4,6 +4,25 @@ pragma solidity ^0.8.18;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract Nftix is ERC721URIStorage {
+    // Custom Errors
+    error Nftix__InvalidEventDates();
+    error Nftix__InvalidTicketCount();
+    error Nftix__EventAlreadyStarted();
+    error Nftix__InsufficientSeats();
+    error Nftix__InvalidSeatNumber();
+    error Nftix__SeatAlreadyBooked();
+    error Nftix__InsufficientPayment();
+    error Nftix__NotTicketOwner();
+    error Nftix__TicketNotResellable();
+    error Nftix__ResalePriceExceeded();
+
+    // Event Types Enum
+    enum EventType {
+        Concert,
+        StandupShow,
+        SportsEvent
+    }
+
     address public owner; // Contract owner address
     uint256 public s_eventCounter; // Manual event counter
     uint256 public s_ticketCounter; // Manual ticket counter
@@ -22,6 +41,7 @@ contract Nftix is ERC721URIStorage {
         uint256 soldTickets;
         uint256 startDate;
         uint256 endDate;
+        EventType eventType;
         string name;
         string description;
         string location;
@@ -39,12 +59,22 @@ contract Nftix is ERC721URIStorage {
         bool isResellable;
     }
 
+    struct TicketWithEventDetails {
+        Ticket ticket;
+        Event eventDetails;
+    }
+
     mapping(uint256 => Event) public events;
     mapping(uint256 => Ticket) public tickets;
     mapping(uint256 => bool) public listedForResale; // Tracks resale tickets
 
-    event EventCreated(uint256 eventId, string name);
-    event TicketMinted(uint256 ticketId, uint256 eventId, address owner, uint256[] seatNumbers);
+    event EventCreated(uint256 eventId, string name, EventType eventType);
+    event TicketMinted(
+        uint256 ticketId,
+        uint256 eventId,
+        address owner,
+        uint256[] seatNumbers
+    );
     event TicketListedForResale(uint256 ticketId, uint256 price);
     event TicketResold(uint256 ticketId, address newOwner, uint256 price);
 
@@ -57,13 +87,14 @@ contract Nftix is ERC721URIStorage {
         uint256 totalTickets,
         uint256 startDate,
         uint256 endDate,
+        EventType eventType,
         string memory name,
         string memory description,
         string memory location,
         string memory image
     ) external {
-        require(startDate < endDate, "Invalid event dates");
-        require(totalTickets > 0, "Total tickets must be greater than 0");
+        if (startDate >= endDate) revert Nftix__InvalidEventDates();
+        if (totalTickets == 0) revert Nftix__InvalidTicketCount();
 
         s_eventCounter++; // Increment the event counter
         uint256 eventId = s_eventCounter;
@@ -79,6 +110,7 @@ contract Nftix is ERC721URIStorage {
             soldTickets: 0,
             startDate: startDate,
             endDate: endDate,
+            eventType: eventType,
             name: name,
             description: description,
             location: location,
@@ -86,31 +118,36 @@ contract Nftix is ERC721URIStorage {
             seats: seats
         });
 
-        emit EventCreated(eventId, name);
+        emit EventCreated(eventId, name, eventType);
     }
 
-    function bookTicket(uint256 eventId, uint256[] memory seatNumbers) external payable {
+    function bookTicket(
+        uint256 eventId,
+        uint256[] memory seatNumbers
+    ) external payable {
         Event storage _event = events[eventId];
-        require(_event.startDate > block.timestamp, "Event has started");
-        require(seatNumbers.length > 0, "At least one seat must be booked");
-        require(
-            _event.soldTickets + seatNumbers.length <= _event.totalTickets,
-            "Not enough tickets"
-        );
-        
+        if (_event.startDate <= block.timestamp)
+            revert Nftix__EventAlreadyStarted();
+        if (seatNumbers.length == 0) revert Nftix__InsufficientSeats();
+        if (_event.soldTickets + seatNumbers.length > _event.totalTickets)
+            revert Nftix__InsufficientSeats();
+
         // Calculate total ticket price
         uint256 totalTicketPrice = _event.price * seatNumbers.length;
-        
+
         // Calculate convenience fee for initial sale
-        uint256 convenienceFee = (totalTicketPrice * INITIAL_SALE_CONVENIENCE_FEE_PERCENT) / 100;
-        
+        uint256 convenienceFee = (totalTicketPrice *
+            INITIAL_SALE_CONVENIENCE_FEE_PERCENT) / 100;
+
         // Ensure sufficient payment including convenience fee
-        require(msg.value >= totalTicketPrice + convenienceFee, "Insufficient payment");
+        if (msg.value < totalTicketPrice + convenienceFee)
+            revert Nftix__InsufficientPayment();
 
         for (uint256 i = 0; i < seatNumbers.length; i++) {
             uint256 seatNumber = seatNumbers[i];
-            require(seatNumber < _event.totalTickets, "Invalid seat number");
-            require(!_event.seats[seatNumber], "Seat already booked");
+            if (seatNumber >= _event.totalTickets)
+                revert Nftix__InvalidSeatNumber();
+            if (_event.seats[seatNumber]) revert Nftix__SeatAlreadyBooked();
             _event.seats[seatNumber] = true; // Mark the seat as booked
         }
 
@@ -142,12 +179,10 @@ contract Nftix is ERC721URIStorage {
 
     function listForResale(uint256 ticketId, uint256 resalePrice) external {
         Ticket storage ticket = tickets[ticketId];
-        require(ticket.owner == msg.sender, "Not the owner");
-        require(ticket.isResellable, "Ticket cannot be resold");
-        require(
-            resalePrice <= (ticket.price * MAX_RESELL_PERCENT) / 100,
-            "Exceeds max resale price"
-        );
+        if (ticket.owner != msg.sender) revert Nftix__NotTicketOwner();
+        if (!ticket.isResellable) revert Nftix__TicketNotResellable();
+        if (resalePrice > (ticket.price * MAX_RESELL_PERCENT) / 100)
+            revert Nftix__ResalePriceExceeded();
 
         listedForResale[ticketId] = true;
 
@@ -156,8 +191,8 @@ contract Nftix is ERC721URIStorage {
 
     function resellTicket(uint256 ticketId) external payable {
         Ticket storage ticket = tickets[ticketId];
-        require(listedForResale[ticketId], "Not listed for resale");
-        require(msg.value >= ticket.price, "Insufficient payment");
+        if (!listedForResale[ticketId]) revert Nftix__InsufficientPayment();
+        if (msg.value < ticket.price) revert Nftix__InsufficientPayment();
 
         uint256 resalePrice = msg.value;
 
@@ -187,7 +222,9 @@ contract Nftix is ERC721URIStorage {
 
     /* Getter Functions */
 
-    function getBookedSeats(uint256 eventId) external view returns (uint256[] memory) {
+    function getBookedSeats(
+        uint256 eventId
+    ) external view returns (uint256[] memory) {
         Event storage _event = events[eventId];
         uint256[] memory bookedSeats = new uint256[](_event.soldTickets);
         uint256 index = 0;
@@ -202,7 +239,34 @@ contract Nftix is ERC721URIStorage {
         return bookedSeats;
     }
 
-    function getEvents() external view returns (Event[] memory) {
+    function getEventsByType(
+        EventType eventType
+    ) external view returns (Event[] memory) {
+        // First, count the number of events of the specified type
+        uint256 count = 0;
+        for (uint256 i = 1; i <= s_eventCounter; i++) {
+            if (events[i].eventType == eventType) {
+                count++;
+            }
+        }
+
+        // Create an array to store the matching events
+        Event[] memory matchingEvents = new Event[](count);
+
+        // Populate the array with matching events
+        uint256 index = 0;
+        uint256 copyofEventCounter = s_eventCounter;
+        for (uint256 i = 1; i <= copyofEventCounter; i++) {
+            if (events[i].eventType == eventType) {
+                matchingEvents[index] = events[i];
+                index++;
+            }
+        }
+
+        return matchingEvents;
+    }
+
+    function getAllEvents() external view returns (Event[] memory) {
         Event[] memory eventList = new Event[](s_eventCounter);
         uint256 copyOfEventCount = s_eventCounter;
 
@@ -211,5 +275,39 @@ contract Nftix is ERC721URIStorage {
         }
 
         return eventList;
+    }
+
+    function getTicketsByOwner(
+        address me
+    ) external view returns (TicketWithEventDetails[] memory) {
+        // First, count the number of tickets owned by the specified address
+        uint256 count = 0;
+        uint256 copyOfTicketCount = s_ticketCounter;
+
+        for (uint256 i = 1; i <= copyOfTicketCount; i++) {
+            if (tickets[i].owner == me) {
+                count++;
+            }
+        }
+
+        // Create an array to store the matching tickets with event details
+        TicketWithEventDetails[]
+            memory matchingTicketsWithEvents = new TicketWithEventDetails[](
+                count
+            );
+
+        // Populate the array with matching tickets and their event details
+        uint256 index = 0;
+        for (uint256 i = 1; i <= copyOfTicketCount; i++) {
+            if (tickets[i].owner == me) {
+                matchingTicketsWithEvents[index] = TicketWithEventDetails({
+                    ticket: tickets[i],
+                    eventDetails: events[tickets[i].eventId]
+                });
+                index++;
+            }
+        }
+
+        return matchingTicketsWithEvents;
     }
 }
