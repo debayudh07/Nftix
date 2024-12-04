@@ -61,16 +61,24 @@ class TicketBookingAgent:
                     "2024-12-02": ["16:00"],
                 },
                 "booking_url": "https://yourapp.com/concerts/coldplay",
-                "price": 15000.00,
+                "price": 25000.00,
             }, 
-            "BGT": {
+            "bgt": {
                 "type": "Sports",
                 "showtimes": {
                     "2024-12-02": ["16:00"],
                 },
                 "booking_url": "https://yourapp.com/sports/BGT",
-                "price": 25000.00,
+                "price": 10000.00,
             },
+            "dilluminati": {
+                "type": "Concerts",
+                "showtimes": {
+                    "2024-12-02": ["16:00"],
+                },
+                "booking_url": "https://yourapp.com/concerts/Dilluminati",
+                "price": 20000.00,
+           }
         }
         self.ticket_contract = None
         self.setup_agent()
