@@ -16,12 +16,47 @@ const tickets = [
     { id: '5', artist: 'Adele', venue: 'Radio City Music Hall', date: '2023-11-20', price: 180 },
 ]
 
+interface Ticket {
+    id: string;
+    artist: string;
+    venue: string;
+    date: string;
+    price: number;
+}
+
+interface TicketWithEventDetails {
+    ticket: {
+      owner: string; // address
+      ticketId: number; // uint256
+      price: number; // uint256
+      eventId: number; // uint256
+      timesSold: number; // uint256
+      seatNumbers: number[]; // uint256[]
+      isResellable: boolean; // bool
+    };
+    eventDetails: {
+      owner: string; // address
+      eventId: number; // uint256
+      price: number; // uint256
+      totalTickets: number; // uint256
+      soldTickets: number; // uint256
+      startDate: number; // uint256 (timestamp)
+      endDate: number; // uint256 (timestamp)
+      eventType: number; // uint8
+      name: string;
+      description: string;
+      location: string;
+      image: string;
+      seats: boolean[]; // bool[]
+    };
+}
+
 export default function MarketPlace() {
-    const [filteredTickets, setFilteredTickets] = useState(tickets)
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
-    const [selectedTicket, setSelectedTicket] = useState(null)
-    const [resalePrice, setResalePrice] = useState('')
-    const [userTickets, setUserTickets] = useState([])
+    const [filteredTickets, setFilteredTickets] = useState<Ticket[]>(tickets)
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+    const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
+    const [resalePrice, setResalePrice] = useState<string>('')
+    const [userTickets, setUserTickets] = useState<Ticket[]>([])
     const account = useAccount();
 
     // Fetch user tickets using useReadContract
@@ -41,7 +76,7 @@ export default function MarketPlace() {
     useEffect(() => {
         if (contractUserTickets) {
             console.log(contractUserTickets)
-            const transformedTickets = contractUserTickets.map(ticketDetail => ({
+            const transformedTickets = (contractUserTickets as TicketWithEventDetails[]).map(ticketDetail => ({
                 id: ticketDetail.ticket.ticketId.toString(),
                 artist: ticketDetail.eventDetails.name,
                 venue: ticketDetail.eventDetails.location,
@@ -69,7 +104,7 @@ export default function MarketPlace() {
         setResalePrice('')
     }
 
-    const handleSelectTicket = (ticket: any) => setSelectedTicket(ticket)
+    const handleSelectTicket = (ticket: Ticket) => setSelectedTicket(ticket)
     const handleResalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => setResalePrice(e.target.value)
 
     const handleResell = () => {
@@ -116,11 +151,11 @@ export default function MarketPlace() {
                                 <div
                                     key={ticket.id}
                                     onClick={() => handleSelectTicket(ticket)}
-                                    className={`p-4 mb-2 border rounded cursor-pointer {
+                                    className={`p-4 mb-2 border rounded cursor-pointer ${
                                         selectedTicket?.id === ticket.id
                                             ? 'bg-blue-100 border-blue-400'
                                             : 'hover:bg-gray-100'
-                                    }ETH`}
+                                    }`}
                                 >
                                     <p className="font-bold">{ticket.artist}</p>
                                     <p>{ticket.venue}</p>

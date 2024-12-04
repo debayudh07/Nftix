@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useReadContract } from "wagmi";
 import EventCard from "@/components/functions/EventCard";
 import MintTicketPopup from "@/components/functions/MintTicketPopup";
-import {Navbar} from "@/components/functions/Navbar";
+import { Navbar } from "@/components/functions/Navbar";
 import abi, { address } from "../abi";
 
 // Enum to match the Solidity EventType
@@ -16,8 +16,9 @@ enum EventType {
 }
 
 // Type to match the Event struct in the smart contract
-type Event = {
+interface Event {
   id: bigint;
+  eventId: bigint;
   name: string;
   description: string;
   image: string;
@@ -27,35 +28,51 @@ type Event = {
   startDate: string;
   endDate: string;
   eventType: EventType;
-};
+  soldTickets: bigint;
+  totalTickets: bigint;
+}
+
+// Processed Event type for frontend
+interface ProcessedEvent extends Omit<Event, 'id' | 'seats' | 'price' | 'soldTickets' | 'totalTickets' | 'eventId'> {
+  id: number;
+  eventId: number;
+  seats: number;
+  price: number;
+  soldTickets: number;
+  totalTickets: number;
+}
 
 export default function Home() {
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<ProcessedEvent | null>(null);
 
-  // Replace with your actual contract address and ABI
+  // Event processing function
+  const processEvent = (event: Event): ProcessedEvent => ({
+    ...event,
+    id: Number(event.id),
+    eventId: Number(event.eventId),
+    seats: Number(event.seats),
+    price: Number(event.price) / 10 ** 18, // Convert from wei to ETH
+    soldTickets: Number(event.soldTickets),
+    totalTickets: Number(event.totalTickets),
+  });
+
+  // Improved type definitions for useReadContract
   const {
-    data: events,
+    data: rawEvents,
     isLoading,
     error,
   } = useReadContract({
-    address: address, // Replace with actual contract address
-    abi: abi, // Replace with your contract ABI
+    address: address,
+    abi: abi,
     functionName: "getEventsByType",
-    args: [EventType.Concert], // Example: fetching conference events
+    args: [EventType.Concert],
   });
 
-  console.log(events);
-
-  // Convert BigInt values to more frontend-friendly format
-  const processedEvents =
-    events?.map((event) => ({
-      ...event,
-      id: Number(event.id),
-      seats: Number(event.seats),
-      price: Number(event.price) / 10 ** 18, // Assuming price is in wei, convert to ETH
-    })) || [];
-
-  console.log("processedEvents", processedEvents);
+  // Process events using useMemo to memoize the result
+  const processedEvents = useMemo(() => {
+    if (!rawEvents || !Array.isArray(rawEvents)) return [];
+    return (rawEvents as Event[]).map(processEvent);
+  }, [rawEvents]);
 
   if (isLoading)
     return (
@@ -70,7 +87,7 @@ export default function Home() {
       <main className="min-h-screen p-8 bg-black text-orange-50">
         <Navbar />
         <div className="text-center text-2xl mt-12 text-red-500">
-          Error loading events: {error.message}
+          Error loading events: {error instanceof Error ? error.message : String(error)}
         </div>
       </main>
     );
@@ -79,14 +96,11 @@ export default function Home() {
     <>
       <Navbar />
       <main className="min-h-screen p-8 bg-black text-orange-50">
-        <h1 className="text-4xl font-bold text-orange-500 mb-8">
-          NFT Event Dashboard
-        </h1>
         {processedEvents.length === 0 ? (
           <div className="text-center text-xl">No events found</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {processedEvents.map((event: any) => (
+            {processedEvents.map((event) => (
               <EventCard
                 key={event.eventId}
                 event={event}
